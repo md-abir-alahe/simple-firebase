@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  GithubAuthProvider,
   GoogleAuthProvider,
   getAuth,
   signInWithPopup,
@@ -11,10 +12,11 @@ const Login = () => {
   const [user, setUser] = useState(null);
 
   const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
 
   const handleGoogleSignIn = () => {
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         const loggedInUser = result.user;
         console.log(loggedInUser);
@@ -25,11 +27,23 @@ const Login = () => {
       });
   };
 
+  const handleGithubSignIn = () => {
+    signInWithPopup(auth, githubProvider)
+    .then(result=>{
+        const loggedInUser = result.user;
+        console.log(loggedInUser);
+        setUser(loggedInUser)
+    })
+    .catch(error=>{
+        console.log(error)
+    })
+  }
+
   const handleSignOut = () => {
     signOut(auth)
       .then((result) => {
         console.log(result);
-        setUser(null);
+        setUser();
       })
       .catch((error) => {
         console.log(error);
@@ -42,7 +56,10 @@ const Login = () => {
       {user ? (
         <button onClick={handleSignOut}>Sign out</button>
       ) : (
-        <button onClick={handleGoogleSignIn}>Google Log in</button>
+        <div>
+          <button onClick={handleGoogleSignIn}>Google Log in</button>
+          <button onClick={handleGithubSignIn}>Github Log in</button>
+        </div>
       )}
       {user && (
         <div>
